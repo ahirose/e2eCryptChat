@@ -811,7 +811,7 @@ header h1 {
 
   .message-form input {
     padding: 10px 14px;
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .message-form button {
@@ -851,6 +851,10 @@ header h1 {
   .message-form button {
     padding: 10px 16px;
     font-size: 11px;
+  }
+
+  .message-form input {
+    font-size: 16px; /* Prevent auto-zoom on iOS */
   }
 
   .user-id {
