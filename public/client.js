@@ -27,12 +27,37 @@ class ChatClient {
     this.sendButton = document.getElementById('send-button');
     this.currentPeerEl = document.getElementById('current-peer-name');
 
+    // Mobile menu elements
+    this.menuToggle = document.getElementById('menu-toggle');
+    this.sidebar = document.querySelector('.sidebar');
+    this.sidebarOverlay = document.getElementById('sidebar-overlay');
+
     this.userIdEl.textContent = this.clientId;
 
     this.messageForm.addEventListener('submit', (e) => {
       e.preventDefault();
       this.sendMessage();
     });
+
+    // Mobile menu toggle
+    this.menuToggle.addEventListener('click', () => {
+      this.toggleSidebar();
+    });
+
+    // Close sidebar when clicking overlay
+    this.sidebarOverlay.addEventListener('click', () => {
+      this.closeSidebar();
+    });
+  }
+
+  toggleSidebar() {
+    this.sidebar.classList.toggle('active');
+    this.sidebarOverlay.classList.toggle('active');
+  }
+
+  closeSidebar() {
+    this.sidebar.classList.remove('active');
+    this.sidebarOverlay.classList.remove('active');
   }
 
   async connect() {
@@ -200,6 +225,11 @@ class ChatClient {
     this.messageInput.placeholder = canSend
       ? 'メッセージを入力...'
       : '鍵交換を待機中...';
+
+    // Close sidebar on mobile after selecting peer
+    if (window.innerWidth <= 768) {
+      this.closeSidebar();
+    }
   }
 
   updateCurrentPeer() {
