@@ -908,13 +908,16 @@ header h1 {
   min-width: 300px;
   max-width: 400px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(255, 0, 255, 0.15) 100%);
+  background:
+    linear-gradient(135deg, rgba(0, 217, 255, 0.25) 0%, rgba(255, 0, 255, 0.25) 100%),
+    rgba(10, 14, 39, 0.95);
+  backdrop-filter: blur(10px);
   border: 2px solid var(--cyber-cyan);
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
   box-shadow:
     0 0 20px rgba(0, 255, 255, 0.6),
     inset 0 0 20px rgba(0, 255, 255, 0.1),
-    0 8px 32px rgba(0, 0, 0, 0.5);
+    0 8px 32px rgba(0, 0, 0, 0.8);
   cursor: pointer;
   pointer-events: auto;
   animation: notificationSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -1005,6 +1008,7 @@ header h1 {
   text-overflow: ellipsis;
   white-space: nowrap;
   padding-left: 30px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .notification-badge {
@@ -1076,6 +1080,13 @@ header h1 {
     min-width: unset;
     max-width: unset;
     width: 100%;
+    background:
+      linear-gradient(135deg, rgba(0, 217, 255, 0.3) 0%, rgba(255, 0, 255, 0.3) 100%),
+      rgba(10, 14, 39, 0.98);
+    box-shadow:
+      0 0 25px rgba(0, 255, 255, 0.7),
+      inset 0 0 25px rgba(0, 255, 255, 0.15),
+      0 8px 32px rgba(0, 0, 0, 0.9);
   }
 
   .notification-from {
@@ -1090,6 +1101,9 @@ header h1 {
 @media screen and (max-width: 480px) {
   .notification {
     padding: 12px 16px;
+    background:
+      linear-gradient(135deg, rgba(0, 217, 255, 0.35) 0%, rgba(255, 0, 255, 0.35) 100%),
+      rgba(10, 14, 39, 0.98);
   }
 
   .notification-from {
