@@ -8,6 +8,7 @@ WebブラウザでEnd-to-End（E2E）暗号化を実装したリアルタイム�
 - **ECDH鍵交換**: Elliptic Curve Diffie-Hellman (P-256曲線) を使用した安全な鍵交換
 - **AES-GCM暗号化**: 256ビットAES-GCMによる強力なメッセージ暗号化
 - **Web Crypto API**: ブラウザ標準のWeb Crypto APIを使用した暗号処理
+- **サブリソース整合性（SRI）**: JavaScriptファイルの改ざんを検知
 - **リアルタイム通信**: WebSocketによる低遅延のメッセージ配信
 - **マルチユーザー対応**: 複数のユーザーが同時に接続可能
 
@@ -38,8 +39,9 @@ WebブラウザでEnd-to-End（E2E）暗号化を実装したリアルタイム�
 e2eCryptJS/
 ├── server.js           # WebSocketサーバー
 ├── package.json        # プロジェクト設定
+├── generate-sri.sh     # SRIハッシュ生成スクリプト
 ├── public/
-│   ├── index.html      # チャットUI
+│   ├── index.html      # チャットUI (SRI対応)
 │   ├── style.css       # スタイルシート
 │   ├── crypto.js       # E2E暗号化ライブラリ
 │   └── client.js       # チャットクライアントロジック
@@ -88,6 +90,42 @@ http://localhost:3000
 4. チャットしたいユーザーをクリックして選択
 5. メッセージを入力して送信
 
+## サブリソース整合性（SRI）
+
+このアプリケーションは、JavaScriptファイルの改ざんを検知するためにサブリソース整合性（SRI）を実装しています。
+
+### SRIとは
+
+SRI（Subresource Integrity）は、ブラウザがダウンロードしたリソース（JavaScriptやCSS）が改ざんされていないことを検証するセキュリティ機能です。HTMLに埋め込まれたハッシュ値と実際のファイルのハッシュ値を比較し、一致しない場合はリソースの読み込みをブロックします。
+
+### SRIの利点
+
+- **改ざん検知**: CDNやサーバーが侵害された場合でも、改ざんされたJavaScriptの実行を防止
+- **中間者攻撃対策**: ネットワーク経路でスクリプトが書き換えられても検知可能
+- **信頼性**: コードの整合性を保証
+
+### JavaScriptファイルを更新した場合
+
+`crypto.js` または `client.js` を変更した場合は、SRIハッシュを再生成する必要があります：
+
+```bash
+./generate-sri.sh
+```
+
+このスクリプトは新しいSHA-384ハッシュを生成し、`index.html`に追加すべきコードを表示します。
+
+### 手動でSRIハッシュを生成
+
+```bash
+# crypto.js のハッシュ生成
+openssl dgst -sha384 -binary public/crypto.js | openssl base64 -A
+
+# client.js のハッシュ生成
+openssl dgst -sha384 -binary public/client.js | openssl base64 -A
+```
+
+生成されたハッシュを`index.html`の`integrity`属性に設定してください。
+
 ## セキュリティに関する注意事項
 
 ### このアプリケーションの保護対象
@@ -100,10 +138,10 @@ http://localhost:3000
 
 - **鍵交換時の中間者攻撃**: 公開鍵の真正性を検証する仕組みがありません
   - 改善策: 公開鍵フィンガープリントを帯域外で確認する機能の追加
-- **クライアント側の改ざん**: JavaScriptコードが改ざんされる可能性
-  - 改善策: サブリソース整合性 (SRI) の実装
 - **メタデータの保護**: 誰が誰とチャットしているかはサーバーに見えます
   - 改善策: Torやミキシングネットワークの使用
+- **HTMLファイルの改ざん**: index.htmlが改ざんされるとSRIも無効化される
+  - 改善策: HTTPS必須、Content Security Policy (CSP) の実装
 
 ### 本番環境での使用について
 
@@ -111,10 +149,11 @@ http://localhost:3000
 
 1. **HTTPS/WSS**: 必ずHTTPS/WSSを使用
 2. **身元確認**: 公開鍵フィンガープリントの検証機能
-3. **完全性チェック**: SRIによるスクリプトの整合性確認
+3. **完全性チェック**: ✓ SRIによるスクリプトの整合性確認（実装済み）
 4. **永続化**: メッセージの暗号化された保存
 5. **認証**: ユーザー認証システムの実装
-6. **監査**: セキュリティ専門家によるコードレビュー
+6. **CSP**: Content Security Policyの実装
+7. **監査**: セキュリティ専門家によるコードレビュー
 
 ## 技術的な詳細
 
