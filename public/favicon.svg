@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Neon glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Gradient -->
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff00ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="64" height="64" fill="#0a0e27"/>
+
+  <!-- Angled corner -->
+  <polygon points="64,0 64,12 52,0" fill="url(#gradient)" opacity="0.8"/>
+
+  <!-- Lock body -->
+  <rect x="20" y="30" width="24" height="20" rx="2"
+        fill="none" stroke="url(#gradient)" stroke-width="3"
+        filter="url(#glow)"/>
+
+  <!-- Lock shackle -->
+  <path d="M 26 30 L 26 22 Q 26 14, 32 14 Q 38 14, 38 22 L 38 30"
+        fill="none" stroke="url(#gradient)" stroke-width="3"
+        stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Keyhole -->
+  <circle cx="32" cy="38" r="3" fill="url(#gradient)" filter="url(#glow)"/>
+  <rect x="30.5" y="38" width="3" height="6" fill="url(#gradient)" filter="url(#glow)"/>
+
+  <!-- Corner accents -->
+  <line x1="12" y1="12" x2="16" y2="12" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
+  <line x1="12" y1="12" x2="12" y2="16" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
+
+  <line x1="52" y1="52" x2="48" y2="52" stroke="#ff00ff" stroke-width="2" opacity="0.6"/>
+  <line x1="52" y1="52" x2="52" y2="48" stroke="#ff00ff" stroke-width="2" opacity="0.6"/>
+</svg>
