@@ -32,6 +32,9 @@ class ChatClient {
     this.sidebar = document.querySelector('.sidebar');
     this.sidebarOverlay = document.getElementById('sidebar-overlay');
 
+    // Notification container
+    this.notificationContainer = document.getElementById('notification-container');
+
     this.userIdEl.textContent = this.clientId;
 
     this.messageForm.addEventListener('submit', (e) => {
@@ -58,6 +61,59 @@ class ChatClient {
   closeSidebar() {
     this.sidebar.classList.remove('active');
     this.sidebarOverlay.classList.remove('active');
+  }
+
+  showNotification(fromId, message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.dataset.peerId = fromId;
+
+    // Truncate message for preview
+    const messagePreview = message.length > 50 ? message.substring(0, 50) + '...' : message;
+
+    notification.innerHTML = `
+      <div class="notification-header">
+        <span class="notification-icon">💬</span>
+        <span class="notification-from">${fromId}</span>
+        <button class="notification-close" aria-label="閉じる">×</button>
+      </div>
+      <div class="notification-message">${messagePreview}</div>
+    `;
+
+    // Click to switch to that peer
+    notification.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('notification-close')) {
+        this.selectPeer(fromId);
+        this.closeNotification(notification);
+      }
+    });
+
+    // Close button handler
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.closeNotification(notification);
+    });
+
+    // Add to container
+    this.notificationContainer.appendChild(notification);
+
+    // Auto-close after 5 seconds
+    setTimeout(() => {
+      if (notification.parentElement) {
+        this.closeNotification(notification);
+      }
+    }, 5000);
+  }
+
+  closeNotification(notification) {
+    notification.classList.add('closing');
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.remove();
+      }
+    }, 300); // Match animation duration
   }
 
   async connect() {
@@ -299,8 +355,8 @@ class ChatClient {
       if (this.currentPeerId === fromId) {
         this.renderMessages();
       } else {
-        // Show notification (could be enhanced with browser notifications)
-        console.log(`New message from ${fromId}`);
+        // Show notification for messages from other peers
+        this.showNotification(fromId, decryptedMessage);
       }
     } catch (error) {
       console.error('Error decrypting message:', error);
