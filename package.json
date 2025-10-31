@@ -1,0 +1,16 @@
+{
+  "name": "e2e-encrypted-chat",
+  "version": "1.0.0",
+  "description": "End-to-End Encrypted Chat Application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["e2e", "encryption", "chat", "websocket"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  }
+}

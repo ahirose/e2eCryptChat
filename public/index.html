@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E2E暗号化チャット</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔒 E2E暗号化チャット</h1>
+      <div class="status">
+        <span id="status" class="status-disconnected">接続していません</span>
+        <span id="user-id" class="user-id"></span>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <aside class="sidebar">
+        <h3>オンラインユーザー</h3>
+        <div id="peers-list" class="peers-list">
+          <p class="no-peers">他のユーザーがいません</p>
+        </div>
+        <div class="encryption-info">
+          <h4>🔐 暗号化情報</h4>
+          <p>全てのメッセージはEnd-to-End暗号化されています</p>
+          <ul>
+            <li>ECDH鍵交換</li>
+            <li>AES-GCM暗号化</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="chat-container">
+        <div class="current-peer">
+          <span id="current-peer-name">チャット相手を選択してください</span>
+        </div>
+        <div id="messages" class="messages"></div>
+        <form id="message-form" class="message-form" disabled>
+          <input
+            type="text"
+            id="message-input"
+            placeholder="チャット相手を選択してメッセージを入力..."
+            disabled
+          >
+          <button type="submit" id="send-button" disabled>送信</button>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script src="crypto.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
