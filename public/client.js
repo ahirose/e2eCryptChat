@@ -5,6 +5,7 @@ class ChatClient {
     this.ws = null;
     this.crypto = new E2ECrypto();
     this.clientId = this.generateClientId();
+    this.crypto.setClientId(this.clientId); // Set client ID for Double Ratchet
     this.currentPeerId = null;
     this.peers = new Map(); // Map of peerId -> { keyExchanged: boolean }
     this.messageHistory = new Map(); // Map of peerId -> array of messages
@@ -191,7 +192,12 @@ class ChatClient {
 
       case 'key_exchange':
         // Received public key from peer
-        await this.handleKeyExchange(message.fromId, message.publicKey);
+        await this.handleKeyExchange(message.fromId, message.publicKey, message.ephemeralKey);
+        break;
+
+      case 'ephemeral_key_exchange':
+        // Received ephemeral key from peer (for Double Ratchet)
+        await this.handleEphemeralKeyExchange(message.fromId, message.ephemeralKey);
         break;
 
       case 'encrypted_message':
@@ -227,22 +233,44 @@ class ChatClient {
     }));
   }
 
-  async handleKeyExchange(peerId, publicKey) {
+  async handleKeyExchange(peerId, publicKey, ephemeralKey) {
     // Derive shared secret with peer's public key
     await this.crypto.deriveSharedSecret(publicKey, peerId);
 
+    // Handle ephemeral key if provided
+    if (ephemeralKey) {
+      await this.crypto.handleEphemeralKey(peerId, ephemeralKey);
+    }
+
     const peerInfo = this.peers.get(peerId);
     if (peerInfo) {
-      peerInfo.keyExchanged = true;
-      this.renderPeersList();
-      console.log(`Key exchange completed with ${peerId}`);
-
       // If this is not the first time, send our public key back
       if (!peerInfo.responseSent) {
         await this.initiateKeyExchange(peerId);
         peerInfo.responseSent = true;
       }
+
+      // Check if we have a pending ephemeral key to send
+      const pendingEphemeralKey = this.crypto.getPendingEphemeralKey(peerId);
+      if (pendingEphemeralKey) {
+        // Send ephemeral key to peer
+        this.ws.send(JSON.stringify({
+          type: 'ephemeral_key_exchange',
+          targetId: peerId,
+          ephemeralKey: pendingEphemeralKey
+        }));
+      }
+
+      peerInfo.keyExchanged = true;
+      this.renderPeersList();
+      console.log(`Key exchange completed with ${peerId}`);
     }
+  }
+
+  async handleEphemeralKeyExchange(peerId, ephemeralKey) {
+    // Handle ephemeral key from peer
+    await this.crypto.handleEphemeralKey(peerId, ephemeralKey);
+    console.log(`Ephemeral key exchange completed with ${peerId}`);
   }
 
   renderPeersList() {

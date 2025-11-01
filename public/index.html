@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#00ffff">
+  <meta name="description" content="End-to-End encrypted chat with Double Ratchet algorithm">
   <title>すごい安全なチャット</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,8 +32,10 @@
           <h4>🔐 暗号化情報</h4>
           <p>全てのメッセージはEnd-to-End暗号化されています</p>
           <ul>
-            <li>ECDH鍵交換</li>
-            <li>AES-GCM暗号化</li>
+            <li>Double Ratchet (Signal)</li>
+            <li>ECDH P-256鍵交換</li>
+            <li>AES-GCM-256暗号化</li>
+            <li>HKDF鍵導出</li>
           </ul>
         </div>
       </aside>
@@ -57,10 +62,10 @@
   <div id="notification-container" class="notification-container"></div>
 
   <script src="crypto.js"
-          integrity="sha384-YyYQUXYyaFNlhOCwgKKYNLoL/WM7Y5M+1yCoZwwEafe9EFY1ii2g5PVK2qcDeSh+"
+          integrity="sha384-FByGn7C7oy8YBwFL33QuqSIhNHkWTS4LYBEfUIjpe1nRUIuRKIGI6NS9Pu4UA81D"
           crossorigin="anonymous"></script>
   <script src="client.js"
-          integrity="sha384-msMg08eHH3xlNX0I7TZQJvs2m/vzRH+qaT/6usTFpqSlCButDfbwE64LIzElkpZ8"
+          integrity="sha384-Hf12NeVksUMiPSKEabmarNKWOq/w1iCDXTr0qjri7pYVSlhVP/bqLzVyl4+Om//M"
           crossorigin="anonymous"></script>
 </body>
 </html>

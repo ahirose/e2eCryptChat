@@ -15,7 +15,9 @@ const server = http.createServer((req, res) => {
     '.html': 'text/html',
     '.js': 'text/javascript',
     '.css': 'text/css',
-    '.json': 'application/json'
+    '.json': 'application/json',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png'
   };
 
   const contentType = contentTypeMap[extname] || 'text/plain';
@@ -78,7 +80,20 @@ wss.on('connection', (ws) => {
             targetClient.send(JSON.stringify({
               type: 'key_exchange',
               fromId: clientId,
-              publicKey: message.publicKey
+              publicKey: message.publicKey,
+              ephemeralKey: message.ephemeralKey
+            }));
+          }
+          break;
+
+        case 'ephemeral_key_exchange':
+          // Forward ephemeral key to target peer (for Double Ratchet)
+          const ephemeralTargetClient = clients.get(message.targetId);
+          if (ephemeralTargetClient && ephemeralTargetClient.readyState === WebSocket.OPEN) {
+            ephemeralTargetClient.send(JSON.stringify({
+              type: 'ephemeral_key_exchange',
+              fromId: clientId,
+              ephemeralKey: message.ephemeralKey
             }));
           }
           break;
