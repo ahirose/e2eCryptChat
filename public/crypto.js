@@ -378,6 +378,42 @@ class DoubleRatchetCrypto {
   }
 
   /**
+   * Generate fingerprint from public key
+   * Returns a human-readable fingerprint for key verification
+   */
+  async generateFingerprint(publicKeyBase64) {
+    // Convert Base64 to ArrayBuffer
+    const publicKeyBytes = this.base64ToArrayBuffer(publicKeyBase64);
+
+    // Hash the public key with SHA-256
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', publicKeyBytes);
+    const hashArray = new Uint8Array(hashBuffer);
+
+    // Convert to numeric string
+    let numericString = '';
+    for (let i = 0; i < hashArray.length; i++) {
+      numericString += hashArray[i].toString().padStart(3, '0');
+    }
+
+    // Take first 60 digits and format into groups of 5
+    const digits = numericString.substring(0, 60);
+    const groups = [];
+    for (let i = 0; i < 60; i += 5) {
+      groups.push(digits.substring(i, i + 5));
+    }
+
+    return groups.join(' ');
+  }
+
+  /**
+   * Get fingerprint of own public key
+   */
+  async getOwnFingerprint() {
+    const publicKey = await this.exportPublicKey();
+    return await this.generateFingerprint(publicKey);
+  }
+
+  /**
    * Helper: Convert ArrayBuffer to Base64
    */
   arrayBufferToBase64(buffer) {

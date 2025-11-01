@@ -1118,3 +1118,186 @@ header h1 {
     font-size: 18px;
   }
 }
+
+/* ===========================
+   Fingerprint Display
+   =========================== */
+
+.fingerprint-display {
+  margin: 15px;
+  background:
+    linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(184, 0, 255, 0.1) 100%),
+    rgba(26, 31, 58, 0.8);
+  border: 1px solid var(--cyber-cyan);
+  border-radius: 4px;
+  box-shadow:
+    0 0 15px rgba(0, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.05);
+  overflow: hidden;
+  animation: borderPulse 3s ease-in-out infinite;
+}
+
+.fingerprint-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: rgba(0, 255, 255, 0.1);
+  border-bottom: 1px solid var(--cyber-cyan);
+  cursor: pointer;
+  user-select: none;
+}
+
+.fingerprint-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  filter: drop-shadow(0 0 5px var(--cyber-yellow));
+}
+
+.fingerprint-title {
+  flex: 1;
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cyber-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+.fingerprint-toggle {
+  background: transparent;
+  border: 1px solid var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fingerprint-toggle:hover {
+  background: var(--cyber-cyan);
+  color: var(--cyber-dark);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+}
+
+.fingerprint-content {
+  padding: 15px;
+  max-height: 500px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.fingerprint-content.collapsed {
+  max-height: 0;
+  padding: 0 15px;
+  overflow: hidden;
+}
+
+.fingerprint-item {
+  margin-bottom: 15px;
+}
+
+.fingerprint-item:last-of-type {
+  margin-bottom: 0;
+}
+
+.fingerprint-label {
+  font-family: 'Rajdhani', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyber-magenta);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
+}
+
+.fingerprint-value {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--cyber-green);
+  background: rgba(0, 255, 65, 0.05);
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 4px;
+  word-break: break-all;
+  letter-spacing: 1px;
+  line-height: 1.6;
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+  box-shadow:
+    0 0 10px rgba(0, 255, 65, 0.2),
+    inset 0 0 10px rgba(0, 255, 65, 0.05);
+}
+
+.fingerprint-note {
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(255, 255, 0, 0.05);
+  border: 1px solid var(--cyber-yellow);
+  border-radius: 4px;
+  color: var(--cyber-yellow);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  text-shadow: 0 0 8px rgba(255, 255, 0, 0.5);
+  box-shadow:
+    0 0 10px rgba(255, 255, 0, 0.2),
+    inset 0 0 15px rgba(255, 255, 0, 0.05);
+}
+
+/* Mobile responsiveness for fingerprint */
+@media screen and (max-width: 768px) {
+  .fingerprint-display {
+    margin: 10px;
+  }
+
+  .fingerprint-header {
+    padding: 10px 12px;
+  }
+
+  .fingerprint-title {
+    font-size: 12px;
+  }
+
+  .fingerprint-icon {
+    font-size: 18px;
+  }
+
+  .fingerprint-content {
+    padding: 12px;
+  }
+
+  .fingerprint-value {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .fingerprint-note {
+    font-size: 12px;
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .fingerprint-value {
+    font-size: 12px;
+    padding: 8px;
+    line-height: 1.5;
+  }
+
+  .fingerprint-label {
+    font-size: 11px;
+  }
+
+  .fingerprint-note {
+    font-size: 11px;
+  }
+}

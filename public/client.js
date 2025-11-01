@@ -7,7 +7,7 @@ class ChatClient {
     this.clientId = this.generateClientId();
     this.crypto.setClientId(this.clientId); // Set client ID for Double Ratchet
     this.currentPeerId = null;
-    this.peers = new Map(); // Map of peerId -> { keyExchanged: boolean }
+    this.peers = new Map(); // Map of peerId -> { keyExchanged: boolean, publicKey: string }
     this.messageHistory = new Map(); // Map of peerId -> array of messages
 
     this.initializeUI();
@@ -244,6 +244,9 @@ class ChatClient {
 
     const peerInfo = this.peers.get(peerId);
     if (peerInfo) {
+      // Store peer's public key for fingerprint verification
+      peerInfo.publicKey = publicKey;
+
       // If this is not the first time, send our public key back
       if (!peerInfo.responseSent) {
         await this.initiateKeyExchange(peerId);
@@ -264,6 +267,11 @@ class ChatClient {
       peerInfo.keyExchanged = true;
       this.renderPeersList();
       console.log(`Key exchange completed with ${peerId}`);
+
+      // Update fingerprint display if this is the current peer
+      if (this.currentPeerId === peerId) {
+        await this.updateFingerprintDisplay();
+      }
     }
   }
 
@@ -309,6 +317,9 @@ class ChatClient {
     this.messageInput.placeholder = canSend
       ? 'メッセージを入力...'
       : '鍵交換を待機中...';
+
+    // Update fingerprint display
+    this.updateFingerprintDisplay();
 
     // Close sidebar on mobile after selecting peer
     if (window.innerWidth <= 768) {
@@ -425,6 +436,58 @@ class ChatClient {
     msgEl.className = 'system-message';
     msgEl.textContent = text;
     this.messagesEl.appendChild(msgEl);
+  }
+
+  async updateFingerprintDisplay() {
+    const fingerprintEl = document.getElementById('fingerprint-display');
+    if (!fingerprintEl) return;
+
+    if (!this.currentPeerId) {
+      fingerprintEl.style.display = 'none';
+      return;
+    }
+
+    const peerInfo = this.peers.get(this.currentPeerId);
+    if (!peerInfo || !peerInfo.publicKey) {
+      fingerprintEl.style.display = 'none';
+      return;
+    }
+
+    // Generate fingerprints
+    const ownFingerprint = await this.crypto.getOwnFingerprint();
+    const peerFingerprint = await this.crypto.generateFingerprint(peerInfo.publicKey);
+
+    // Update display
+    fingerprintEl.style.display = 'block';
+    fingerprintEl.innerHTML = `
+      <div class="fingerprint-header">
+        <span class="fingerprint-icon">🔑</span>
+        <span class="fingerprint-title">Identity Key Fingerprints</span>
+        <button class="fingerprint-toggle" aria-label="閉じる">−</button>
+      </div>
+      <div class="fingerprint-content">
+        <div class="fingerprint-item">
+          <div class="fingerprint-label">あなた (${this.clientId}):</div>
+          <div class="fingerprint-value">${ownFingerprint}</div>
+        </div>
+        <div class="fingerprint-item">
+          <div class="fingerprint-label">相手 (${this.currentPeerId}):</div>
+          <div class="fingerprint-value">${peerFingerprint}</div>
+        </div>
+        <div class="fingerprint-note">
+          ⚠️ これらの数字を帯域外（電話、対面など）で確認してください。
+          一致すれば中間者攻撃を受けていません。
+        </div>
+      </div>
+    `;
+
+    // Add toggle functionality
+    const toggleBtn = fingerprintEl.querySelector('.fingerprint-toggle');
+    const content = fingerprintEl.querySelector('.fingerprint-content');
+    toggleBtn.addEventListener('click', () => {
+      content.classList.toggle('collapsed');
+      toggleBtn.textContent = content.classList.contains('collapsed') ? '+' : '−';
+    });
   }
 }
 
