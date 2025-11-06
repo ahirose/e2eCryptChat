@@ -24,6 +24,8 @@ class ChatClient {
     this.peersListEl = document.getElementById('peers-list');
     this.messagesEl = document.getElementById('messages');
     this.messageForm = document.getElementById('message-form');
+    // Firefox treats a disabled form as non-submittable even if children are re-enabled.
+    this.messageForm.removeAttribute('disabled');
     this.messageInput = document.getElementById('message-input');
     this.sendButton = document.getElementById('send-button');
     this.currentPeerEl = document.getElementById('current-peer-name');
